@@ -6,7 +6,12 @@ var router = express.Router();
 
 const connectionString = process.env.URI;
 const pool = new Pool({
-  connectionString,
+  connectionLimit: 10,
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+    debug: false,
   ssl: {
     rejectUnauthorized: false,
   },
