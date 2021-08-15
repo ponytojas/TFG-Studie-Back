@@ -4,14 +4,9 @@ require("dotenv").config();
 var express = require("express");
 var router = express.Router();
 
-const connectionString = process.env.URI;
+const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({
-  connectionLimit: 10,
-    host: process.env.HOST,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE,
-    debug: false,
+  connectionString,
   ssl: {
     rejectUnauthorized: false,
   },
@@ -22,7 +17,7 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/saveData", async (req, res, next) => {
-  try {
+  try{
     console.log("Received request");
 
     const client = await pool.connect();
@@ -40,9 +35,8 @@ router.post("/saveData", async (req, res, next) => {
     client.query(query, values);
 
     res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-  } finally {
+  } catch(err) { }
+  finally{
     client.release();
   }
 });
