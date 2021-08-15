@@ -17,6 +17,8 @@ router.get("/", () => {
 });
 
 router.post("/saveData", async (req, res, next) => {
+  console.log("Received request");
+
   let update = await pool
     .query("SELECT * from responses where id = $1", [req.body.id])
     .then((res) => res.rows.length > 0)
