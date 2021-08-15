@@ -7,12 +7,10 @@ var router = express.Router();
 const connectionString = process.env.URI;
 const pool = new Pool({
   connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
 });
 
 router.get("/", () => {
+  res.sendStatus(200);
   return "There are not the droid you're lookin for.";
 });
 
@@ -31,7 +29,7 @@ router.post("/saveData", async (req, res, next) => {
 
   pool.query(query, values);
 
-  res.send(200);
+  res.sendStatus(200);
 });
 
 module.exports = router;
