@@ -9,7 +9,7 @@
 
   app.use(express.json());
 
-  app.use(router);
+  app.use("/api/", router);
   const server = require("http").createServer(app);
 
   server.listen(PORT, () => {
