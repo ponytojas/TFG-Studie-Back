@@ -1,15 +1,10 @@
-const { Pool, Client } = require("pg");
+const { Client } = require("pg");
 require("dotenv").config();
 
 var express = require("express");
 var router = express.Router();
 
-const connectionString = process.env.URI;
-const pool = new Pool({
-  connectionString,
-});
-
-router.get("/", () => {
+router.get("/", (req, res, next) => {
   res.sendStatus(200);
   return "There are not the droid you're lookin for.";
 });
@@ -17,7 +12,14 @@ router.get("/", () => {
 router.post("/saveData", async (req, res, next) => {
   console.log("Received request");
 
-  let update = await pool
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  let update = await client
     .query("SELECT * from responses where id = $1", [req.body.id])
     .then((res) => res.rows.length > 0)
     .catch(() => false);
@@ -27,7 +29,9 @@ router.post("/saveData", async (req, res, next) => {
     : `INSERT INTO responses (id, ${req.body.question}) VALUES ($1, $2)`;
   let values = [req.body.id, req.body.response];
 
-  pool.query(query, values);
+  client.query(query, values);
+
+  client.end();
 
   res.sendStatus(200);
 });
