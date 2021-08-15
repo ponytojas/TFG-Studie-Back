@@ -12,6 +12,10 @@ const pool = new Pool({
   },
 });
 
+router.get("/", () => {
+  return "There are not the droid you're lookin for.";
+});
+
 router.post("/saveData", async (req, res, next) => {
   let update = await pool
     .query("SELECT * from responses where id = $1", [req.body.id])
