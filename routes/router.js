@@ -17,21 +17,29 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/saveData", async (req, res, next) => {
-  console.log("Received request");
+  try {
+    console.log("Received request");
 
-  let update = await pool
-    .query("SELECT * from responses where id = $1", [req.body.id])
-    .then((res) => res.rows.length > 0)
-    .catch(() => false);
+    const client = await pool.connect();
 
-  let query = update
-    ? `UPDATE responses set ${req.body.question} = $2 where id = $1`
-    : `INSERT INTO responses (id, ${req.body.question}) VALUES ($1, $2)`;
-  let values = [req.body.id, req.body.response];
+    let update = await client
+      .query("SELECT * from responses where id = $1", [req.body.id])
+      .then((res) => res.rows.length > 0)
+      .catch(() => false);
 
-  pool.query(query, values);
+    let query = update
+      ? `UPDATE responses set ${req.body.question} = $2 where id = $1`
+      : `INSERT INTO responses (id, ${req.body.question}) VALUES ($1, $2)`;
+    let values = [req.body.id, req.body.response];
 
-  res.sendStatus(200);
+    client.query(query, values);
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    client.release();
+  }
 });
 
 module.exports = router;
