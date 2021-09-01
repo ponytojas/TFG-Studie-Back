@@ -23,6 +23,8 @@ router.get("/", (req, res, next) => {
 
 router.post("/saveData", async (req, res, next) => {
   console.log("Received request");
+  let agent = req.get('User-Agent');
+  console.log(`ID => ${req.body.id}   /   User agent => ${agent}`)
 
   const client = await pool.connect();
   try {
